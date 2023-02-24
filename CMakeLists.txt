@@ -14,6 +14,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/Build/RenameTools.rc")
 set(PROJECT_SOURCES
         main.cpp
+        Spoiler.h
+        Spoiler.cpp
         leerenametool.cpp
         leerenametool.h
         leerenametool.ui

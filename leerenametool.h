@@ -10,6 +10,8 @@
 #include <QFileSystemModel>
 #include <QDebug>
 #include <QFileDialog>
+#include "Spoiler.h"
+#include "qlineedit.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -35,10 +37,13 @@ public slots:
     void OnPrefixChanged(QString newprefix);
     // Suffix changed
     void OnSuffixChanged(QString newsuffix);
+    // Search changed
+    void OnSearchChanged(QString newsuffix);
+    // Replace changed
+    void OnReplaceChanged(QString newsuffix);
+
     // on filter changed
     void OnFilterChanged(QString filter);
-    //reload treview
-    void OnReloadTreeView(bool isClicked);
     // on Rename Clicked
     void OnDoRenameClicked(bool isClicked);
     // picture filter
@@ -51,16 +56,15 @@ private:
     Ui::leeRenameTool *ui;
 
     void ImplanteTreeView(QString directory);
+    void ImplanteSearchAndReplace();
 
     QFileSystemModel* fileSystemModel;
     QString lCurrentDirName;
     QDir lDir;
-    QString lPrefix;
-    QString lSuffix;
-    QString lnewname;
-    QStringList lpictures;
-    QStringList l3DFiles;
-    QStringList lallFiles;
-
+    QString lPrefix,lSuffix,lnewname,lSearch,lReplace;
+    QStringList lpictures,l3DFiles,lallFiles;
+    QLineEdit* sline;
+    QLineEdit *rline;
+    Section* spoiler;
 };
 #endif // LEERENAMETOOL_H

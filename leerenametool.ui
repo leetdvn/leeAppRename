@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>548</width>
-    <height>371</height>
+    <width>592</width>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,18 @@
    <iconset>
     <normaloff>../../../Downloads/avatar.jpg</normaloff>../../../Downloads/avatar.jpg</iconset>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(62, 62, 62);</string>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
+   <item row="0" column="0" rowspan="2" colspan="2">
+    <layout class="QVBoxLayout" name="VLayout">
+     <property name="spacing">
+      <number>4</number>
+     </property>
      <item>
       <layout class="QHBoxLayout" name="BrowserLayout" stretch="0,0,0">
        <property name="spacing">
@@ -30,8 +39,12 @@
        </property>
        <item>
         <widget class="QLabel" name="browserLabel">
+         <property name="styleSheet">
+          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
-          <string>Browser</string>
+          <string>Browser     </string>
          </property>
         </widget>
        </item>
@@ -40,10 +53,17 @@
          <property name="enabled">
           <bool>true</bool>
          </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(113, 113, 113);</string>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QToolButton" name="browserButton">
+         <property name="styleSheet">
+          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
           <string>...</string>
          </property>
@@ -61,13 +81,21 @@
        </property>
        <item>
         <widget class="QLabel" name="NewnameLabel">
+         <property name="styleSheet">
+          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
           <string>New Name</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="NewnameEdit"/>
+        <widget class="QLineEdit" name="NewnameEdit">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(113, 113, 113);</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -81,13 +109,21 @@
        </property>
        <item>
         <widget class="QLabel" name="prefixLabel">
+         <property name="styleSheet">
+          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
-          <string>Prefix</string>
+          <string>    Prefix      </string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="prefixEdit"/>
+        <widget class="QLineEdit" name="prefixEdit">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(113, 113, 113);</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -101,22 +137,23 @@
        </property>
        <item>
         <widget class="QLabel" name="SuffixLabel">
+         <property name="styleSheet">
+          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
-          <string>Subfix</string>
+          <string>    Subfix     </string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="SuffixEdit"/>
+        <widget class="QLineEdit" name="SuffixEdit">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(113, 113, 113);</string>
+         </property>
+        </widget>
        </item>
       </layout>
-     </item>
-     <item>
-      <widget class="QPushButton" name="ReloadTree">
-       <property name="text">
-        <string>Reload Tree View</string>
-       </property>
-      </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" name="FilterLayout">
@@ -125,8 +162,12 @@
        </property>
        <item>
         <widget class="QLabel" name="FilterLabel">
+         <property name="styleSheet">
+          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
-          <string>filter</string>
+          <string>       Filter      </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -134,10 +175,23 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="FilterEdit"/>
+        <widget class="QLineEdit" name="FilterEdit">
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(113, 113, 113);
+border-color: rgb(89, 89, 89);
+</string>
+         </property>
+         <property name="placeholderText">
+          <string>Filter Handle</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QCheckBox" name="FilterImage">
+         <property name="styleSheet">
+          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
           <string>Picture Image</string>
          </property>
@@ -148,6 +202,10 @@
        </item>
        <item>
         <widget class="QCheckBox" name="FilterFBX">
+         <property name="styleSheet">
+          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
           <string>3D FBX</string>
          </property>
@@ -160,26 +218,45 @@
        <property name="acceptDrops">
         <bool>true</bool>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgb(113, 113, 113);</string>
+       </property>
        <attribute name="headerDefaultSectionSize">
         <number>99</number>
        </attribute>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="DoRename">
+       <property name="styleSheet">
+        <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);
+background-color: rgb(0, 170, 255);</string>
+       </property>
+       <property name="text">
+        <string>Do Rename</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QProgressBar" name="progressBar">
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);
+background-color: rgb(177, 177, 177);</string>
+       </property>
+       <property name="value">
+        <number>50</number>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
     </layout>
-   </item>
-   <item row="2" column="0">
-    <widget class="QProgressBar" name="progressBar">
-     <property name="value">
-      <number>50</number>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="DoRename">
-     <property name="text">
-      <string>Do Rename</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
