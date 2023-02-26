@@ -26,6 +26,7 @@ public:
     leeRenameTool(QWidget *parent = nullptr);
     ~leeRenameTool();
 
+
 public slots:
     // browser
     void OnBrowserChanged(QString content);
@@ -46,12 +47,16 @@ public slots:
     void OnFilterChanged(QString filter);
     // on Rename Clicked
     void OnDoRenameClicked(bool isClicked);
-    // picture filter
-    void OnFilterImagePicture(int state);
     // FBX filter
     void OnFilterFBX(int state);
 
     void OnDirectoryFilterLoader(QString path);
+
+    void OnReplaceClicked();
+
+    // picture filter
+    void OnFilterBoxChanged(int state);
+
 private:
     Ui::leeRenameTool *ui;
 
@@ -62,9 +67,15 @@ private:
     QString lCurrentDirName;
     QDir lDir;
     QString lPrefix,lSuffix,lnewname,lSearch,lReplace;
-    QStringList lpictures,l3DFiles,lallFiles;
+    QStringList lpictures,l3DFiles,lallFiles,lPng,ljpg,ljpeg;
+    QList<QStringList> leeFilters;
     QLineEdit* sline;
     QLineEdit *rline;
     Section* spoiler;
+    QPushButton* ReplaceBtn;
+
+    QString lRemoveAllDigit(QString iStr);
+
+    QString ltestDemo();
 };
 #endif // LEERENAMETOOL_H

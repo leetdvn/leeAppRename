@@ -14,7 +14,7 @@ class Section : public QWidget
 
 private:
     QGridLayout* mainLayout;
-    QToolButton* toggleButton;
+   // QToolButton* toggleButton;
     QFrame* headerLine;
     QParallelAnimationGroup* toggleAnimation;
     QScrollArea* contentArea;
@@ -39,6 +39,8 @@ public:
 
     // update animations and their heights
     void updateHeights();
+
+    QToolButton* toggleButton;
 };
 #endif // SPOILER_H
 

@@ -54,18 +54,53 @@ color: rgb(255, 255, 255);</string>
           <bool>true</bool>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(113, 113, 113);</string>
+          <string notr="true">background-color: rgb(113, 113, 113);
+font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="placeholderText">
+          <string>Open Browser Files Exploder</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QToolButton" name="browserButton">
+         <property name="mouseTracking">
+          <bool>false</bool>
+         </property>
+         <property name="tabletTracking">
+          <bool>false</bool>
+         </property>
+         <property name="autoFillBackground">
+          <bool>false</bool>
+         </property>
          <property name="styleSheet">
           <string notr="true">font: 700 11pt &quot;Sitka&quot;;
 color: rgb(255, 255, 255);</string>
          </property>
          <property name="text">
           <string>...</string>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+         <property name="autoRepeat">
+          <bool>false</bool>
+         </property>
+         <property name="autoExclusive">
+          <bool>false</bool>
+         </property>
+         <property name="popupMode">
+          <enum>QToolButton::DelayedPopup</enum>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonIconOnly</enum>
+         </property>
+         <property name="autoRaise">
+          <bool>false</bool>
+         </property>
+         <property name="arrowType">
+          <enum>Qt::NoArrow</enum>
          </property>
         </widget>
        </item>
@@ -93,7 +128,12 @@ color: rgb(255, 255, 255);</string>
        <item>
         <widget class="QLineEdit" name="NewnameEdit">
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(113, 113, 113);</string>
+          <string notr="true">background-color: rgb(113, 113, 113);
+font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="placeholderText">
+          <string>Input type new name here</string>
          </property>
         </widget>
        </item>
@@ -121,7 +161,12 @@ color: rgb(255, 255, 255);</string>
        <item>
         <widget class="QLineEdit" name="prefixEdit">
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(113, 113, 113);</string>
+          <string notr="true">background-color: rgb(113, 113, 113);
+font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="placeholderText">
+          <string>Input type prefix name here</string>
          </property>
         </widget>
        </item>
@@ -149,7 +194,12 @@ color: rgb(255, 255, 255);</string>
        <item>
         <widget class="QLineEdit" name="SuffixEdit">
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(113, 113, 113);</string>
+          <string notr="true">background-color: rgb(113, 113, 113);
+font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);</string>
+         </property>
+         <property name="placeholderText">
+          <string>Input type suffix name here</string>
          </property>
         </widget>
        </item>
@@ -167,7 +217,7 @@ color: rgb(255, 255, 255);</string>
 color: rgb(255, 255, 255);</string>
          </property>
          <property name="text">
-          <string>       Filter      </string>
+          <string>       Filter     </string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -178,37 +228,69 @@ color: rgb(255, 255, 255);</string>
         <widget class="QLineEdit" name="FilterEdit">
          <property name="styleSheet">
           <string notr="true">background-color: rgb(113, 113, 113);
-border-color: rgb(89, 89, 89);
+font: 700 11pt &quot;Sitka&quot;;
+color: rgb(255, 255, 255);
 </string>
          </property>
          <property name="placeholderText">
-          <string>Filter Handle</string>
+          <string>Input type Filter here or select ------------------&gt;&gt;&gt;&gt;</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="FilterImage">
+        <widget class="QComboBox" name="FilterBox">
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="autoFillBackground">
+          <bool>true</bool>
+         </property>
          <property name="styleSheet">
-          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
+          <string notr="true">font: 700 14pt &quot;Sitka&quot;;
 color: rgb(255, 255, 255);</string>
          </property>
-         <property name="text">
-          <string>Picture Image</string>
+         <property name="editable">
+          <bool>true</bool>
          </property>
-         <property name="autoRepeatInterval">
-          <number>102</number>
+         <property name="placeholderText">
+          <string/>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="FilterFBX">
-         <property name="styleSheet">
-          <string notr="true">font: 700 11pt &quot;Sitka&quot;;
-color: rgb(255, 255, 255);</string>
+         <property name="duplicatesEnabled">
+          <bool>true</bool>
          </property>
-         <property name="text">
-          <string>3D FBX</string>
+         <property name="frame">
+          <bool>true</bool>
          </property>
+         <item>
+          <property name="text">
+           <string>   AllFiles  </string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>   Pictures  </string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>   3DFiles  </string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>    PNG</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>    JPG</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>    JPEG</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>

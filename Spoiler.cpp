@@ -54,7 +54,7 @@ void Section::toggle(bool expanded)
 
     this->isExpanded = expanded;
 
-    qDebug() << "MV: toggle: isExpanded " << isExpanded;
+    //qDebug() << "MV: toggle: isExpanded " << isExpanded;
 }
 
 void Section::setContentLayout(QLayout& contentLayout)

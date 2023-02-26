@@ -16,18 +16,34 @@ leeRenameTool::leeRenameTool(QWidget *parent)
     connect(ui->SuffixEdit,&QLineEdit::textChanged, this, &leeRenameTool::OnSuffixChanged);
     connect(sline,&QLineEdit::textChanged, this, &leeRenameTool::OnSearchChanged);
     connect(rline,&QLineEdit::textChanged, this, &leeRenameTool::OnReplaceChanged);
+    connect(ReplaceBtn,&QPushButton::clicked, this, &leeRenameTool::OnReplaceClicked);
     connect(ui->FilterEdit,&QLineEdit::textChanged, this, &leeRenameTool::OnFilterChanged);
     connect(ui->DoRename,&QPushButton::clicked, this, &leeRenameTool::OnDoRenameClicked);
-    connect(ui->FilterImage,&QCheckBox::stateChanged,this,&leeRenameTool::OnFilterImagePicture);
-    connect(ui->FilterFBX,&QCheckBox::stateChanged,this,&leeRenameTool::OnFilterFBX);
+    connect(ui->FilterBox, QOverload<int>::of(&QComboBox::currentIndexChanged),[=](int index){ OnFilterBoxChanged(index);});
+//    connect(ui->FilterFBX,&QCheckBox::stateChanged,this,&leeRenameTool::OnFilterFBX);
 
-    lpictures <<"*.jpg" <<"*.png" <<"*.tiff";
-    l3DFiles << "*.fbx" << "*.obj" << "*.abc";
-    lallFiles << "*.*";
+    //ui->browserEdit->setText("C:/Users/LeePhan/Downloads/Kid app/home");
+
+
     this->setWindowIcon(QIcon("./icon/lee.ico"));
     ui->browserEdit->setText("C:/Users/LeePhan/Downloads/Kid app/home");
+    lallFiles << "*.*";
+    leeFilters.append(lallFiles);
+    lpictures <<"*.jpg" <<"*.png" <<"*.tiff" << "*.jpeg" << "*.bmp" << "*.xpm";
+    leeFilters.append(lpictures);
+    l3DFiles <<"*.fbx" <<"*.obj" <<"*.ma" << "*.mb" << "*.max" << "*.abc" << "*.usd" << "*.uasset";
+    leeFilters.append(l3DFiles);
+    lPng << "*.png";
+    leeFilters.append(lPng);
+    ljpg << "*.jpg";
+    leeFilters.append(ljpg);
+    ljpeg <<"*.jpeg";
+    leeFilters.append(ljpeg);
 
-
+//    leeFilters[2] <<"*.fbx" <<"*.obj" <<"*.ma" << "*.mb" << "*.max" << "*.abc" << "*.usd" << "*.uasset";
+//    leeFilters[3] << "*.png";
+//    leeFilters[4] << "*.jpg";
+//    leeFilters[5] << "*.jpeg";
 
     //anyLayout->addLayout(ui->SearchReplaceLayout);
 }
@@ -43,7 +59,7 @@ void leeRenameTool::OnBrowserChanged(QString content)
     QDir dir(content);
     if(dir.exists()){
         lCurrentDirName=content;
-        ui->browserEdit->setEnabled(false);
+        //ui->browserEdit->setEnabled(false);
         ImplanteTreeView(content);
     }
 
@@ -138,7 +154,6 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
     for(auto &filename : files)
     {
         QFileInfo info(lDir.absolutePath() + "/" + filename);
-        QString rawFileName = filename.section(".", 0, 0);
         QString rawSuffix=info.suffix();
         QString countStr = QString::number(count +1);
 
@@ -149,10 +164,6 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
 
         qDebug() << newName << Qt::endl;
         qDebug() << rawSuffix << Qt::endl;
-
-        if(lSearch !=""){
-            newName=lCurrentDirName + "/" +  filename.replace(lSearch,lReplace);
-        }
 
         if(filename !=newName){
             bool success = lDir.rename(info.absoluteFilePath(), newName);
@@ -179,13 +190,12 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
 
 }
 
-void leeRenameTool::OnFilterImagePicture(int state)
+void leeRenameTool::OnFilterBoxChanged(int state)
 {
-    qDebug() << "Make filter Picture image" << Qt::endl;
+    qDebug() << state << Qt::endl;
     if(lCurrentDirName.isEmpty() || lCurrentDirName.isNull()) return;
 
-    QStringList filters = state > 0 ? lpictures : lallFiles;
-    fileSystemModel->setNameFilters(filters);
+    fileSystemModel->setNameFilters(leeFilters[state]);
 }
 
 void leeRenameTool::OnFilterFBX(int state)
@@ -201,6 +211,45 @@ void leeRenameTool::OnFilterFBX(int state)
 void leeRenameTool::OnDirectoryFilterLoader(QString path)
 {
     qDebug() << "Directory loaded" << Qt::endl;
+
+}
+
+void leeRenameTool::OnReplaceClicked()
+{
+    QStringList files = lDir.entryList(QDir::Files);
+
+    int progres=0;
+    ui->progressBar->setRange(0,files.length());
+    ui->progressBar->setValue(0);
+    for(auto &filename : files)
+    {
+        QFileInfo info(lDir.absolutePath() + "/" + filename);
+
+        QStringList filters=lSearch.split("%");
+        //qDebug() << filters.length() << Qt::endl;
+
+        QRegExp rx("(\\d+)");
+        QString nSearch = lSearch=="%" ? filename.remove(rx) : filename.replace(lSearch,lReplace);
+
+        qDebug() << nSearch << Qt::endl;
+        QString newName =  lCurrentDirName + "/" +   nSearch;
+
+
+        if(filename !=newName && !lSearch.isEmpty()){
+            bool success = lDir.rename(info.absoluteFilePath(), newName);
+            if(!success)  qDebug() << filename << Qt::endl;
+        }
+        if(progres > 100)
+            progres=100;
+
+        progres++;
+
+        ui->progressBar->setValue(progres);
+    }
+   ltestDemo();
+   // qDebug() << str << Qt::endl;
+
+    ui->progressBar->setValue(0);
 
 }
 
@@ -220,26 +269,28 @@ void leeRenameTool::ImplanteTreeView(QString directory)
 void leeRenameTool::ImplanteSearchAndReplace()
 {
     spoiler = new Section("Search And Replace",60,this);
-    QVBoxLayout * vlayout = new QVBoxLayout(this);
-    QHBoxLayout* search = new QHBoxLayout(this);
+    spoiler->toggleButton->setStyleSheet("font: 700 11pt \"Sitka\"; color: rgb(255, 255, 255);");
+    spoiler->toggleButton->setAutoRaise(true);
+    QVBoxLayout * vlayout = new QVBoxLayout();
+    QHBoxLayout* search = new QHBoxLayout();
     vlayout->addLayout(search);
-    QLabel * searchLabel = new QLabel("   Search     ",this);
+    QLabel * searchLabel = new QLabel("   Search     ",spoiler);
     search->addWidget(searchLabel);
-    sline = new QLineEdit(this);
+    sline = new QLineEdit(spoiler);
     search->addWidget(sline);
-    QHBoxLayout* replace = new QHBoxLayout(this);
+    QHBoxLayout* replace = new QHBoxLayout();
     vlayout->addLayout(replace);
-    QLabel * replaceLabel = new QLabel("  Replace  ",this);
+    QLabel * replaceLabel = new QLabel("  Replace  ",spoiler);
     replace->addWidget(replaceLabel);
-    rline = new QLineEdit(this);
+    rline = new QLineEdit(spoiler);
     rline->setStyleSheet("background-color: rgb(113, 113, 113);");
     sline->setStyleSheet("background-color: rgb(113, 113, 113);");
     replaceLabel->setStyleSheet("font: 700 11pt \"Sitka\";color: rgb(255, 255, 255);");
     searchLabel->setStyleSheet("font: 700 11pt \"Sitka\";color: rgb(255, 255, 255);");
-    QPushButton* replacebtn = new QPushButton(spoiler);
-    replacebtn->setStyleSheet("font: 700 11pt \"Sitka\";color: rgb(255, 255, 255);background-color: rgb(170, 85, 127);");
-    replacebtn->setText("Do Replace");
-    vlayout->addWidget(replacebtn);
+    ReplaceBtn = new QPushButton(spoiler);
+    ReplaceBtn->setStyleSheet("font: 700 11pt \"Sitka\";color: rgb(255, 255, 255);background-color: rgb(170, 85, 127);");
+    ReplaceBtn->setText("Do Replace");
+    vlayout->addWidget(ReplaceBtn);
     replace->addWidget(rline);
 
     vlayout->setContentsMargins(0,0,0,0);
@@ -252,5 +303,34 @@ void leeRenameTool::ImplanteSearchAndReplace()
     spoiler->setContentLayout(*vlayout);
     ui->VLayout->insertWidget(5,spoiler);
 
+}
+
+QString leeRenameTool::lRemoveAllDigit(QString iStr)
+{
+    QRegExp rx("(\\d+)");
+    QString outStr,mapStr;
+    int pos=0;
+    while((pos=rx.indexIn(iStr,pos)) !=-1)  {
+        outStr += rx.cap(1);
+        pos+=rx.matchedLength();
+    }
+    return outStr;
+}
+
+QString leeRenameTool::ltestDemo()
+{
+    QString demoStr="_545345435_asdasd";
+    QString temp="_%_",reMap;;
+
+    QString mapStr = lRemoveAllDigit(demoStr);
+    QString result = temp.replace("%",mapStr);
+
+    QString endResult=demoStr.replace(result,"taoday_");
+    qDebug() << endResult << Qt::endl;
+//    for(auto s:endResult){
+//        qDebug() << s << Qt::endl;
+//    }
+    //qDebug() << mapStr << endResult.length() << result << Qt::endl;
+    return "";
 }
 
