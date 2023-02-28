@@ -26,7 +26,7 @@ leeRenameTool::leeRenameTool(QWidget *parent)
 
 
     this->setWindowIcon(QIcon("./icon/lee.ico"));
-    ui->browserEdit->setText("C:/Users/LeePhan/Downloads/Kid app/home");
+    //ui->browserEdit->setText("C:/Users/LeePhan/Downloads/Kid app/home");
     lallFiles << "*.*";
     leeFilters.append(lallFiles);
     lpictures <<"*.jpg" <<"*.png" <<"*.tiff" << "*.jpeg" << "*.bmp" << "*.xpm";
@@ -156,26 +156,28 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
         QFileInfo info(lDir.absolutePath() + "/" + filename);
         QString rawSuffix=info.suffix();
         QString countStr = QString::number(count +1);
+        QString newCopy=*&lnewname;
 
-        QString newName = lnewname == "" ?
-                    lCurrentDirName +  "/" + QString::number(count +1) + "."  + rawSuffix :
-                    lCurrentDirName +  "/"  + lPrefix + lnewname + lSuffix + countStr +  "."  + rawSuffix
-                    ;
+        if(newCopy.isEmpty() || newCopy.isNull()) newCopy=newCopy;
+
+        QString newStr= lPrefix + newCopy + lSuffix + countStr;
+
+        QString newName = lCurrentDirName +  "/"  + newStr +  "."  + rawSuffix ;
 
         qDebug() << newName << Qt::endl;
-        qDebug() << rawSuffix << Qt::endl;
+        //qDebug() << rawSuffix << Qt::endl;
 
-        if(filename !=newName){
-            bool success = lDir.rename(info.absoluteFilePath(), newName);
+        if(QFile(newName).exists())
+            newName = newName + countStr;
+        bool success = lDir.rename(info.absoluteFilePath(), newName);
 
-            if(success)
-            {
-                changedFiles << info.absoluteFilePath();
-            }
-            else
-            {
-                failedFiles << info.absoluteFilePath();
-            }
+        if(success)
+        {
+            changedFiles << info.absoluteFilePath();
+        }
+        else
+        {
+            failedFiles << info.absoluteFilePath();
         }
         if(progres > 100)
             progres=100;
@@ -197,6 +199,8 @@ void leeRenameTool::OnFilterBoxChanged(int state)
 
     fileSystemModel->setNameFilters(leeFilters[state]);
 }
+
+
 
 void leeRenameTool::OnFilterFBX(int state)
 {
@@ -221,23 +225,44 @@ void leeRenameTool::OnReplaceClicked()
     int progres=0;
     ui->progressBar->setRange(0,files.length());
     ui->progressBar->setValue(0);
+    int count{};
     for(auto &filename : files)
     {
         QFileInfo info(lDir.absolutePath() + "/" + filename);
-
-        QStringList filters=lSearch.split("%");
-        //qDebug() << filters.length() << Qt::endl;
-
+        //----------------------------
         QRegExp rx("(\\d+)");
-        QString nSearch = lSearch=="%" ? filename.remove(rx) : filename.replace(lSearch,lReplace);
+        QRegExp rNum("(\\%+$)");
+        rNum.indexIn(lSearch,0);
+        rx.indexIn(filename,0);
 
-        qDebug() << nSearch << Qt::endl;
-        QString newName =  lCurrentDirName + "/" +   nSearch;
+        QString SeachCopy= lSearch;
+        QString fileCopy=filename;
+        QString FindNumX=rNum.cap(1);
+        //lSearch=="%" ? filename.remove(rx) :
+        QString num=rx.cap(1),OutNum;
+
+       // int nCount = lSearch.count(rNum);
+        if(!filename.endsWith(num))
+            OutNum=num;
+
+       // SeachCopy = SeachCopy.replace(SeachCopy.indexOf("%"),SeachCopy.size(),OutNum);
+
+        //--------------------------------------
 
 
-        if(filename !=newName && !lSearch.isEmpty()){
+         QString demo= NumFilter(fileCopy,SeachCopy);
+
+        QString nSearch =  filename.replace(filename.indexOf(SeachCopy),SeachCopy.size(),lReplace);
+
+        QString Res=fileCopy.section(OutNum,0,OutNum.size());
+        //qDebug() << SeachCopy << OutNum <<  FindNumX << Qt::endl;
+        QString newName =  lCurrentDirName + "/" + nSearch;
+
+        // qDebug() << OutNum << OutNum.size() << Res<< Qt::endl;
+
+        if(filename !=newName && !nSearch.isEmpty()){
             bool success = lDir.rename(info.absoluteFilePath(), newName);
-            if(!success)  qDebug() << filename << Qt::endl;
+            //if(!success)  qDebug() << filename << Qt::endl;
         }
         if(progres > 100)
             progres=100;
@@ -245,12 +270,27 @@ void leeRenameTool::OnReplaceClicked()
         progres++;
 
         ui->progressBar->setValue(progres);
+        count++;
     }
    ltestDemo();
    // qDebug() << str << Qt::endl;
 
     ui->progressBar->setValue(0);
 
+}
+
+QString& leeRenameTool::NumFilter(QString filename,QString &search)
+{
+    QRegExp rNum("(\\%?)");
+    QRegExp rx("(\\d+)");
+    rx.indexIn(filename,0);
+    QString num= rx.cap(1);
+    int nCount = search.count(QLatin1Char('%'));
+   // qDebug() << nCount << Qt::endl;
+
+    search=search.replace(search.indexOf("%"),nCount,num.section(rNum,search.indexOf("%"),nCount));
+    qDebug() << search << Qt::endl;
+    return search;
 }
 
 void leeRenameTool::ImplanteTreeView(QString directory)

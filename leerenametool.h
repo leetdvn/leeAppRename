@@ -57,6 +57,7 @@ public slots:
     // picture filter
     void OnFilterBoxChanged(int state);
 
+    QString& NumFilter(QString filename,QString &search);
 private:
     Ui::leeRenameTool *ui;
 
