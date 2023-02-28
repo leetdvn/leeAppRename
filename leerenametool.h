@@ -54,6 +54,7 @@ public slots:
 
     void OnReplaceClicked();
 
+    void ReGetValue();
     // picture filter
     void OnFilterBoxChanged(int state);
 
