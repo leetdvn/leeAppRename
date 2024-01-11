@@ -63,7 +63,7 @@ void leeRenameTool::OnBrowserChanged(QString content)
         //ui->browserEdit->setEnabled(false);
         ImplanteTreeView(content);
     }
-
+    Currentnamefiles = dir.entryList(QDir::Files);
 }
 
 void leeRenameTool::OnNewNameChanged(QString newname)
@@ -154,6 +154,8 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
     int progres=0;
     ui->progressBar->setRange(0,files.length());
     ui->progressBar->setValue(0);
+
+#pragma omp for paranell order
     for(QString &filename : files)
     {
         QFileInfo info(nDir.absolutePath() + "/" + filename);

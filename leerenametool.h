@@ -71,6 +71,7 @@ private:
     QString lPrefix,lSuffix,lnewname,lSearch,lReplace;
     QStringList lpictures,l3DFiles,lallFiles,lPng,ljpg,ljpeg;
     QList<QStringList> leeFilters;
+    QStringList Currentnamefiles;
     QLineEdit* sline;
     QLineEdit *rline;
     Section* spoiler;
