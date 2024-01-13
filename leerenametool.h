@@ -12,7 +12,10 @@
 #include <QFileDialog>
 #include "Spoiler.h"
 #include "qlineedit.h"
+#include "QKeyEvent"
 
+
+#define LEELOG(mes)  qDebug() << mes << Qt::endl;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class leeRenameTool; }
@@ -47,6 +50,8 @@ public slots:
     void OnFilterChanged(QString filter);
     // on Rename Clicked
     void OnDoRenameClicked(bool isClicked);
+    //Rename 2
+    void OnRename_Clicked(bool isClicked);
     // FBX filter
     void OnFilterFBX(int state);
 
@@ -58,8 +63,18 @@ public slots:
     // picture filter
     void OnFilterBoxChanged(int state);
 
+    //On Undo
+    void OnUndo_Clicked();
+
+    //On Redo
+    void OnRedo_Clicked();
+
+    //OnReset
+    void OnReset_Clicked();
+
     QString& NumFilter(QString filename,QString &search);
-private:
+
+protected:
     Ui::leeRenameTool *ui;
 
     void ImplanteTreeView(QString directory);
@@ -70,15 +85,25 @@ private:
     QDir lDir;
     QString lPrefix,lSuffix,lnewname,lSearch,lReplace;
     QStringList lpictures,l3DFiles,lallFiles,lPng,ljpg,ljpeg;
+    QStringList defaultnametiles;
     QList<QStringList> leeFilters;
     QStringList Currentnamefiles;
     QLineEdit* sline;
     QLineEdit *rline;
     Section* spoiler;
     QPushButton* ReplaceBtn;
-
+    QPushButton* resetbtn;
+    QPushButton* undobtn;
+    QPushButton* redobtn;
     QString lRemoveAllDigit(QString iStr);
 
     QString ltestDemo();
+
+    QString GetInputName(int inIdx);
+
+private:
+   void keyPressEvent(QKeyEvent *event) override;
+   QList<QStringList> processNames;
+   int step=0;
 };
 #endif // LEERENAMETOOL_H

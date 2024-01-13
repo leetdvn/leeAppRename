@@ -9,10 +9,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/msvc2019_64/lib/cmake")
+set(ICON_DIR "${CMAKE_CURRENT_BINARY_DIR}/icon")
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/Build/RenameTools.ico")
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/lee.ico")
 set(PROJECT_SOURCES
         main.cpp
         Spoiler.h
@@ -20,6 +21,7 @@ set(PROJECT_SOURCES
         leerenametool.cpp
         leerenametool.h
         leerenametool.ui
+        #RenameTools.rc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -42,6 +44,7 @@ else()
         add_executable(RenameTools
             ${PROJECT_SOURCES}
             ${APP_ICON_RESOURCE_WINDOWS}
+            lButton.h
         )
     endif()
 endif()
@@ -63,3 +66,11 @@ install(TARGETS RenameTools
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(RenameTools)
 endif()
+
+#Copy Config file .Rc and Copy Icon
+file(MAKE_DIRECTORY ${ICON_DIR})
+execute_process(COMMAND ${CMAKE_COMMAND} -E make_directory ${ICON_DIR})
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/lee.ico ${ICON_DIR}/lee.ico COPYONLY)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/RenameTools.rc ${CMAKE_CURRENT_BINARY_DIR}/RenameTools.rc COPYONLY)

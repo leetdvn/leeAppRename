@@ -7,6 +7,7 @@ leeRenameTool::leeRenameTool(QWidget *parent)
 {
     ui->setupUi(this);
 
+    setFocusPolicy(Qt::StrongFocus);
 
     ImplanteSearchAndReplace();
     ui->progressBar->setValue(0);
@@ -20,10 +21,13 @@ leeRenameTool::leeRenameTool(QWidget *parent)
     connect(ReplaceBtn,&QPushButton::clicked, this, &leeRenameTool::OnReplaceClicked);
     connect(ui->FilterEdit,&QLineEdit::textChanged, this, &leeRenameTool::OnFilterChanged);
     connect(ui->DoRename,&QPushButton::clicked, this, &leeRenameTool::OnDoRenameClicked);
+    connect(ui->ResetBtn,&QPushButton::clicked,this,&leeRenameTool::OnReset_Clicked);
+    connect(ui->UndoBtn,&QPushButton::clicked,this,&leeRenameTool::OnUndo_Clicked);
+    connect(ui->RedoBtn,&QPushButton::clicked,this,&leeRenameTool::OnRedo_Clicked);
     connect(ui->FilterBox, QOverload<int>::of(&QComboBox::currentIndexChanged),[=](int index){ OnFilterBoxChanged(index);});
 //    connect(ui->FilterFBX,&QCheckBox::stateChanged,this,&leeRenameTool::OnFilterFBX);
 
-    //ui->browserEdit->setText("C:/Users/LeePhan/Downloads/Kid app/home");
+    ui->browserEdit->setText("C:/Users/THANGLE/Desktop/hoatietnen");
 
 
     this->setWindowIcon(QIcon("./icon/lee.ico"));
@@ -56,14 +60,26 @@ leeRenameTool::~leeRenameTool()
 
 void leeRenameTool::OnBrowserChanged(QString content)
 {
-    qDebug() << content << Qt::endl;
+    //qDebug() << content << Qt::endl;
     QDir dir(content);
-    if(dir.exists()){
-        lCurrentDirName=content;
-        //ui->browserEdit->setEnabled(false);
-        ImplanteTreeView(content);
+    if(!dir.exists()) {
+        LEELOG("dir does'nt exists.");
+        return;
     }
-    Currentnamefiles = dir.entryList(QDir::Files);
+
+    if(defaultnametiles.length() > 0)
+        defaultnametiles = QStringList();
+
+#pragma omp for paranell
+    for(auto f : dir.entryInfoList(QDir::Files)){
+        qDebug() << "file : " << f.filePath() << Qt::endl;
+        defaultnametiles.append(f.filePath());
+    }
+
+    lCurrentDirName=content;
+    //ui->browserEdit->setEnabled(false);
+    ImplanteTreeView(content);
+    Currentnamefiles = *&defaultnametiles;
 }
 
 void leeRenameTool::OnNewNameChanged(QString newname)
@@ -139,13 +155,18 @@ void leeRenameTool::OnBrowserClicked()
 void leeRenameTool::OnDoRenameClicked(bool isClicked)
 {
 
-    if(lnewname.isEmpty() || lnewname.isNull()){
+    //if(lnewname.isEmpty() || lnewname.isNull()){
 
-    }
+    //    qDebug() << "null " << Qt::endl;
+    //    return;
+    //}
 
     QDir nDir(lDir);
     QStringList files = nDir.entryList(QDir::Files);
-
+    if(files.isEmpty()){
+        qDebug() << "empty file in folder " << Qt::endl;
+        return;
+    }
 
 
     QStringList changedFiles, failedFiles;
@@ -161,35 +182,22 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
         QFileInfo info(nDir.absolutePath() + "/" + filename);
 
         QString rawSuffix=info.suffix();
-        QString countStr = QString::number(count +1);
-        QString newCopy=lnewname;
 
-        if(newCopy.isEmpty() || newCopy.isNull()) newCopy=filename.section(".",0,0);
+        //get new input name
+        QString newName = GetInputName(count +1) + "." + rawSuffix;
 
-        QString newStr= lPrefix + newCopy + lSuffix ;
+        //newStr = QFile(newName).exists() ?  newStr +  countStr : newStr;
 
+        newName = nDir.absolutePath() +  "/"  + newName ;
 
-
-        QString newName = lCurrentDirName +  "/"  + newStr +  "."  + rawSuffix ;
-
-        newStr = QFile(newName).exists() ?  newStr +  countStr : newStr;
-
-        newName = lCurrentDirName +  "/"  + newStr +  "."  + rawSuffix ;
-
-        qDebug() << newName << Qt::endl;
+        qDebug() << "Old : " +  info.absoluteFilePath() << " new : " + newName << Qt::endl;
         //qDebug() << rawSuffix << Qt::endl;
 
         //bool success ;
         nDir.rename(info.absoluteFilePath(), newName);
 
-//        if(success)
-//        {
-//            changedFiles << info.absoluteFilePath();
-//        }
-//        else
-//        {
-//            failedFiles << info.absoluteFilePath();
-//        }
+        changedFiles.append(newName);
+
         if(progres > 100)
             progres=100;
 
@@ -199,8 +207,17 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
 
         count++;
     }
+    processNames.append(changedFiles);
     ui->progressBar->setValue(0);
+    step++;
+}
 
+QString leeRenameTool::GetInputName(int inIdx)
+{
+    QString NewName= ui->NewnameEdit->text();
+    NewName += ui->SuffixEdit->text();
+    NewName = ui->prefixEdit->text() + NewName ;
+    return NewName.isEmpty() || NewName.isNull() ? QString::number(inIdx) : NewName + QString::number(inIdx);
 }
 
 void leeRenameTool::OnFilterBoxChanged(int state)
@@ -209,6 +226,33 @@ void leeRenameTool::OnFilterBoxChanged(int state)
     if(lCurrentDirName.isEmpty() || lCurrentDirName.isNull()) return;
 
     fileSystemModel->setNameFilters(leeFilters[state]);
+}
+
+void leeRenameTool::OnUndo_Clicked()
+{
+    if(!processNames.empty()){
+        ui->UndoBtn->setEnabled(false);
+        return;
+    }
+}
+
+void leeRenameTool::OnRedo_Clicked()
+{
+
+}
+
+void leeRenameTool::OnReset_Clicked()
+{
+    ui->UndoBtn->setEnabled(false);
+    ui->RedoBtn->setEnabled(false);
+    if(defaultnametiles.isEmpty())
+        return;
+
+#pragma omp for paranell order
+    for(int i=0;i < defaultnametiles.length() ; i++)
+    {
+        qDebug() << defaultnametiles[i] << processNames[step-1][i] << Qt::endl;
+    }
 }
 
 
@@ -231,6 +275,15 @@ void leeRenameTool::OnDirectoryFilterLoader(QString path)
 
 void leeRenameTool::OnReplaceClicked()
 {
+    if(lSearch.isEmpty() || lReplace.isEmpty() ) {
+        //qDebug() << "empty Search and replace" << Qt::endl;
+        LEELOG("empty Search and replace");
+        return;
+    }
+
+    if(!processNames.empty())
+        ui->UndoBtn->setEnabled(true);
+
     QDir nDir(lDir);
     QStringList files = nDir.entryList(QDir::Files);
     if(files.length() <=0) return;
@@ -313,6 +366,16 @@ QString& leeRenameTool::NumFilter(QString filename,QString &search)
     return search;
 }
 
+void leeRenameTool::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key()== Qt::CTRL && event->key() == Qt::Key_Z ){
+        qDebug() << "abac" << Qt::endl;
+        event->accept();
+    }
+    //qDebug() << "\nkey event in board: " << event->key() << Qt::endl;
+    QWidget::keyPressEvent(event);
+}
+
 void leeRenameTool::ImplanteTreeView(QString directory)
 {
     QDir dir(directory);
@@ -393,4 +456,3 @@ QString leeRenameTool::ltestDemo()
     //qDebug() << mapStr << endResult.length() << result << Qt::endl;
     return "";
 }
-

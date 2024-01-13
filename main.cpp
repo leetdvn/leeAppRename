@@ -8,4 +8,5 @@ int main(int argc, char *argv[])
     leeRenameTool w;
     w.show();
     return a.exec();
+
 }
