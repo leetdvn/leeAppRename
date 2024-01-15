@@ -13,6 +13,7 @@
 #include "Spoiler.h"
 #include "qlineedit.h"
 #include "QKeyEvent"
+#include <QUndoStack>
 
 
 #define LEELOG(mes)  qDebug() << mes << Qt::endl;
@@ -50,8 +51,6 @@ public slots:
     void OnFilterChanged(QString filter);
     // on Rename Clicked
     void OnDoRenameClicked(bool isClicked);
-    //Rename 2
-    void OnRename_Clicked(bool isClicked);
     // FBX filter
     void OnFilterFBX(int state);
 
@@ -100,6 +99,10 @@ protected:
     QString ltestDemo();
 
     QString GetInputName(int inIdx);
+
+    QStringList GetFileNames();
+
+    QUndoStack* undo_stack;
 
 private:
    void keyPressEvent(QKeyEvent *event) override;

@@ -7,6 +7,7 @@ leeRenameTool::leeRenameTool(QWidget *parent)
 {
     ui->setupUi(this);
 
+    undo_stack = new QUndoStack(this);
     setFocusPolicy(Qt::StrongFocus);
 
     ImplanteSearchAndReplace();
@@ -70,7 +71,7 @@ void leeRenameTool::OnBrowserChanged(QString content)
     if(defaultnametiles.length() > 0)
         defaultnametiles = QStringList();
 
-#pragma omp for paranell
+#pragma omp for paranell order
     for(auto f : dir.entryInfoList(QDir::Files)){
         qDebug() << "file : " << f.filePath() << Qt::endl;
         defaultnametiles.append(f.filePath());
@@ -151,7 +152,6 @@ void leeRenameTool::OnBrowserClicked()
 
 }
 
-
 void leeRenameTool::OnDoRenameClicked(bool isClicked)
 {
 
@@ -161,6 +161,7 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
     //    return;
     //}
 
+    qDebug() << step << Qt::endl;
     QDir nDir(lDir);
     QStringList files = nDir.entryList(QDir::Files);
     if(files.isEmpty()){
@@ -175,6 +176,7 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
     int progres=0;
     ui->progressBar->setRange(0,files.length());
     ui->progressBar->setValue(0);
+
 
 #pragma omp for paranell order
     for(QString &filename : files)
@@ -209,6 +211,7 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
     }
     processNames.append(changedFiles);
     ui->progressBar->setValue(0);
+    ui->UndoBtn->setEnabled(true);
     step++;
 }
 
@@ -218,6 +221,13 @@ QString leeRenameTool::GetInputName(int inIdx)
     NewName += ui->SuffixEdit->text();
     NewName = ui->prefixEdit->text() + NewName ;
     return NewName.isEmpty() || NewName.isNull() ? QString::number(inIdx) : NewName + QString::number(inIdx);
+}
+
+QStringList leeRenameTool::GetFileNames()
+{
+    if(step==0) return defaultnametiles;
+
+    return processNames[step];
 }
 
 void leeRenameTool::OnFilterBoxChanged(int state)
@@ -234,6 +244,8 @@ void leeRenameTool::OnUndo_Clicked()
         ui->UndoBtn->setEnabled(false);
         return;
     }
+
+    undo_stack->undo();
 }
 
 void leeRenameTool::OnRedo_Clicked()
@@ -243,19 +255,18 @@ void leeRenameTool::OnRedo_Clicked()
 
 void leeRenameTool::OnReset_Clicked()
 {
-    ui->UndoBtn->setEnabled(false);
-    ui->RedoBtn->setEnabled(false);
     if(defaultnametiles.isEmpty())
         return;
 
-#pragma omp for paranell order
-    for(int i=0;i < defaultnametiles.length() ; i++)
-    {
-        qDebug() << defaultnametiles[i] << processNames[step-1][i] << Qt::endl;
+//#pragma omp for paranell order
+    for(int i=0;i < defaultnametiles.length() ; i++){
+       qDebug() << defaultnametiles[i] << Qt::endl;
     }
+
+   // ui->UndoBtn->setEnabled(false);
+   // ui->RedoBtn->setEnabled(false);
+
 }
-
-
 
 void leeRenameTool::OnFilterFBX(int state)
 {

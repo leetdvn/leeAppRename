@@ -7,6 +7,7 @@ class LeeButton : public QPushButton
 {
 public:
     LeeButton() {}
+
 };
 
 #endif // LBUTTON_H
