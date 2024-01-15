@@ -242,7 +242,7 @@ QStringList leeRenameTool::GetFileNames()
 
 void leeRenameTool::OnFilterBoxChanged(int state)
 {
-    qDebug() << state << Qt::endl;
+    LEELOG(state);
     if(lCurrentDirName.isEmpty() || lCurrentDirName.isNull()) return;
 
     fileSystemModel->setNameFilters(leeFilters[state]);
@@ -256,26 +256,6 @@ void leeRenameTool::OnUndo_Clicked()
         ui->UndoBtn->setEnabled(false);
         return;
     }
-
-}
-
-void leeRenameTool::OnRedo_Clicked()
-{
-    undo_stack->redo();
-}
-
-void leeRenameTool::OnReset_Clicked()
-{
-    if(defaultnametiles.isEmpty())
-        return;
-
-//#pragma omp for paranell order
-    for(int i=0;i < defaultnametiles.length() ; i++){
-       qDebug() << defaultnametiles[i] << Qt::endl;
-    }
-
-   // ui->UndoBtn->setEnabled(false);
-   // ui->RedoBtn->setEnabled(false);
 
 }
 

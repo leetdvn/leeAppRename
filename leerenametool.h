@@ -64,12 +64,6 @@ public slots:
     //On Undo
     void OnUndo_Clicked();
 
-    //On Redo
-    void OnRedo_Clicked();
-
-    //OnReset
-    void OnReset_Clicked();
-
     QString& NumFilter(QString filename,QString &search);
 
 protected:
