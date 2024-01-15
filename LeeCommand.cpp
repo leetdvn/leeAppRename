@@ -1,27 +1,56 @@
 
 #include "LeeCommand.h"
-#include "qdebug.h"
+#include "LeeDefination.h"
+#include "qdir.h"
 
 
 
-LeeTdCommand::LeeTdCommand(QPushButton *m_Button, QStringList inOldNames, QStringList inNewNames, QUndoCommand *parent=nullptr)
+LeeTdCommand::LeeTdCommand(QString inDir, QStringList inOldNames, QStringList inNewNames, QUndoCommand *parent)
     :QUndoCommand(parent)
 {
-    LeeButton = m_Button;
+    dir = inDir;
     m_OldNames = inOldNames;
     m_NewNames = inNewNames;
+
+    ChangeFileName(inDir,m_OldNames,m_NewNames);
 }
 
 void LeeTdCommand::undo()
 {
-    if(m_OldNames.isEmpty() || m_NewNames.isEmpty()) return;
-
-    for(int i=0;i < m_NewNames.length() ; i++){
-
+    LEELOG("undo..");
+    if(m_OldNames.isEmpty() || m_NewNames.isEmpty()) {
+        LEELOG("Print abc.....");
+        return;
     }
+
+    return ChangeFileName(dir,m_NewNames,m_OldNames);
+
 }
 
 void LeeTdCommand::redo()
 {
-    qDebug() << "redo" << Qt::endl;
+    LEELOG("redo");
+}
+
+bool LeeTdCommand::ExistsName(QString inFileName)
+{
+    if(inFileName.isNull() || inFileName.isEmpty()){
+        LEELOG("empty Dir");
+        return false;
+    }
+    return QFile::exists(inFileName);
+}
+
+void LeeTdCommand::ChangeFileName(QString inDir, QStringList inOldNames, QStringList inNewNames)
+{
+    QDir nDir(inDir);
+    QStringList files = nDir.entryList(QDir::Files);
+
+#pragma omp for paranell orderred
+    for(int i=0;i < files.length() ; i++){
+        if(!ExistsName(inOldNames[i]) ||
+            ExistsName(inNewNames[i]))
+            continue;
+        nDir.rename(inOldNames[i],inNewNames[i]);
+    }
 }

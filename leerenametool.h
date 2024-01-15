@@ -10,13 +10,12 @@
 #include <QFileSystemModel>
 #include <QDebug>
 #include <QFileDialog>
+#include "LeeCommand.h"
 #include "Spoiler.h"
 #include "qlineedit.h"
 #include "QKeyEvent"
 #include <QUndoStack>
 
-
-#define LEELOG(mes)  qDebug() << mes << Qt::endl;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class leeRenameTool; }
@@ -91,9 +90,7 @@ protected:
     QLineEdit *rline;
     Section* spoiler;
     QPushButton* ReplaceBtn;
-    QPushButton* resetbtn;
-    QPushButton* undobtn;
-    QPushButton* redobtn;
+
     QString lRemoveAllDigit(QString iStr);
 
     QString ltestDemo();
@@ -104,6 +101,7 @@ protected:
 
     QUndoStack* undo_stack;
 
+    LeeTdCommand* leeCommand;
 private:
    void keyPressEvent(QKeyEvent *event) override;
    QList<QStringList> processNames;

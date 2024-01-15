@@ -8,15 +8,18 @@ class LeeTdCommand : public QUndoCommand
 {
 
 public:
-    LeeTdCommand(QPushButton* m_Button,QStringList inOldNames,QStringList inNewNames,QUndoCommand* parent);
+    LeeTdCommand(QString inDir,QStringList inOldNames,QStringList inNewNames,QUndoCommand* parent=nullptr);
 
 protected:
     void undo() override;
     void redo() override;
 
+    bool ExistsName(QString inFileName);
+    QString dir;
     QPushButton* LeeButton;
     QStringList m_OldNames,m_NewNames;
 
+    void ChangeFileName(QString inDir,QStringList inOldNames,QStringList inNewNames);
 };
 
 #endif // LEECOMMAND_H

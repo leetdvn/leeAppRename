@@ -21,9 +21,9 @@ set(PROJECT_SOURCES
         leerenametool.cpp
         leerenametool.h
         leerenametool.ui
-        lButton.h
         LeeCommand.h
         LeeCommand.cpp
+        LeeDefination.h
 
         #RenameTools.rc
 )
@@ -48,9 +48,6 @@ else()
         add_executable(RenameTools
             ${PROJECT_SOURCES}
             ${APP_ICON_RESOURCE_WINDOWS}
-            lButton.h
-            LeeCommand.h
-            LeeCommand.cpp
         )
     endif()
 endif()
