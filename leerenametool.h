@@ -72,6 +72,8 @@ protected:
     void ImplanteTreeView(QString directory);
     void ImplanteSearchAndReplace();
 
+    void InitCommand(const QString inDir,const QStringList inOldNames,const QStringList inNewNames);
+
     QFileSystemModel* fileSystemModel;
     QString lCurrentDirName;
     QDir lDir;
@@ -95,7 +97,6 @@ protected:
 
     QUndoStack* undo_stack;
 
-    LeeTdCommand* leeCommand;
 private:
    void keyPressEvent(QKeyEvent *event) override;
    QList<QStringList> processNames;

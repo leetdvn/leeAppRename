@@ -30,7 +30,7 @@ leeRenameTool::leeRenameTool(QWidget *parent)
     connect(ui->FilterBox, QOverload<int>::of(&QComboBox::currentIndexChanged),[=](int index){ OnFilterBoxChanged(index);});
 //    connect(ui->FilterFBX,&QCheckBox::stateChanged,this,&leeRenameTool::OnFilterFBX);
 
-    ui->browserEdit->setText("C:/Users/THANGLE/Desktop/hoatietnen");
+    //ui->browserEdit->setText("C:/Users/THANGLE/Desktop/hoatietnen");
 
 
     this->setWindowIcon(QIcon("./icon/lee.ico"));
@@ -213,13 +213,9 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
         count++;
     }
 
-    leeCommand = new LeeTdCommand(nDir.absolutePath(),defaultnametiles,changedFiles);
-    undo_stack->push(leeCommand);
-
     ui->progressBar->setValue(0);
-    ui->UndoBtn->setEnabled(true);
-    step++;
 
+    InitCommand(nDir.absolutePath(),defaultnametiles,changedFiles);
 
 }
 
@@ -271,13 +267,13 @@ void leeRenameTool::OnFilterFBX(int state)
 
 void leeRenameTool::OnDirectoryFilterLoader(QString path)
 {
-    qDebug() << "Directory loaded" << Qt::endl;
-
+    //qDebug() << "Directory loaded" << Qt::endl;
+    LEELOG("load Directory : " + path);
 }
 
 void leeRenameTool::OnReplaceClicked()
 {
-    if(lSearch.isEmpty() || lReplace.isEmpty() ) {
+    if(sline->text().isEmpty() || rline->text().isEmpty() ) {
         //qDebug() << "empty Search and replace" << Qt::endl;
         LEELOG("empty Search and replace");
         return;
@@ -288,7 +284,7 @@ void leeRenameTool::OnReplaceClicked()
 
     QDir nDir(lDir);
     QStringList files = nDir.entryList(QDir::Files);
-    QStringList NewNames;
+    QStringList NewNames,OldNames;
     if(files.length() <=0) return;
     int progres=0;
     ui->progressBar->setRange(0,files.length());
@@ -299,15 +295,15 @@ void leeRenameTool::OnReplaceClicked()
         //----------------------------
         QRegExp rx("(\\d+)");
         QRegExp rNum("(\\%+$)");
-        rNum.indexIn(lSearch,0);
+        rNum.indexIn(sline->text(),0);
         rx.indexIn(filename,0);
 
-        QString SeachCopy= lSearch;
-        QString FindNumX=rNum.cap(1);
+        QString SeachCopy= sline->text();
+        rNum.cap(1);
         //lSearch=="%" ? filename.remove(rx) :
         QString num=rx.cap(1),OutNum;
 
-        int nCount = lSearch.count(rNum);
+        int nCount = sline->text().count(rNum);
         if(!filename.endsWith(num))
             OutNum=num;
 
@@ -319,17 +315,14 @@ void leeRenameTool::OnReplaceClicked()
                     filename.replace(filename.indexOf(SeachCopy),SeachCopy.size(),lReplace):
                     filename.replace(SeachCopy,lReplace);
 
-        QString Res=filename.section(OutNum,0,OutNum.size());
+        filename.section(OutNum,0,OutNum.size());
         //qDebug() << SeachCopy << OutNum <<  FindNumX << Qt::endl;
         QString newName =  lCurrentDirName + "/" + nSearch;
 
-         qDebug() << SeachCopy <<  Res<< Qt::endl;
 
         NewNames.append(newName);
-        if(filename !=newName && !nSearch.isEmpty()){
-           nDir.rename(info.absoluteFilePath(), newName);
-//          if(!success)  qDebug() <<  Qt::endl;
-        }
+        OldNames.append(info.absoluteFilePath());
+
         if(progres > 100)
             progres=100;
 
@@ -337,13 +330,12 @@ void leeRenameTool::OnReplaceClicked()
 
         ui->progressBar->setValue(progres);
     }
-   ltestDemo();
    // qDebug() << str << Qt::endl;
 
-    leeCommand = new LeeTdCommand(nDir.absolutePath(),files,NewNames);
-    undo_stack->push(leeCommand);
     ui->progressBar->setValue(0);
     ReGetValue();
+
+    InitCommand(nDir.absolutePath(),OldNames,NewNames);
 }
 
 void leeRenameTool::ReGetValue()
@@ -431,6 +423,19 @@ void leeRenameTool::ImplanteSearchAndReplace()
 
 }
 
+void leeRenameTool::InitCommand(const QString inDir,const QStringList inOldNames,const QStringList inNewNames)
+{
+    if(inDir.isEmpty() || inDir.isNull() || inOldNames.isEmpty() || inNewNames.isEmpty()){
+        LEELOG("Input Error..");
+        return;
+    }
+
+    LeeTdCommand* command = new LeeTdCommand(inDir,inOldNames,inNewNames);
+    undo_stack->push(command);
+    ui->UndoBtn->setEnabled(true);
+    step++;
+}
+
 QString leeRenameTool::lRemoveAllDigit(QString iStr)
 {
     QRegExp rx("(\\d+)");
@@ -452,7 +457,8 @@ QString leeRenameTool::ltestDemo()
     QString result = temp.replace("%",mapStr);
 
     QString endResult=demoStr.replace(result,"taoday_");
-    qDebug() << endResult << Qt::endl;
+    LEELOG(endResult);
+    //qDebug() << endResult << Qt::endl;
 //    for(auto s:endResult){
 //        qDebug() << s << Qt::endl;
 //    }
