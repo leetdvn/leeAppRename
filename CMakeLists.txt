@@ -13,7 +13,7 @@ set(ICON_DIR "${CMAKE_CURRENT_BINARY_DIR}/icon")
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
-set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/lee.ico")
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/RenameTools.rc")
 set(PROJECT_SOURCES
         main.cpp
         Spoiler.h
@@ -24,8 +24,7 @@ set(PROJECT_SOURCES
         LeeCommand.h
         LeeCommand.cpp
         LeeDefination.h
-
-        #RenameTools.rc
+        RenameTools.rc
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -48,6 +47,7 @@ else()
         add_executable(RenameTools
             ${PROJECT_SOURCES}
             ${APP_ICON_RESOURCE_WINDOWS}
+
         )
     endif()
 endif()
