@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QDirModel>
+#include <QDir>
 #include <QFile>
 #include <QStandardItemModel>
 #include <QAbstractItemModel>
@@ -15,7 +15,7 @@
 #include "qlineedit.h"
 #include "QKeyEvent"
 #include <QUndoStack>
-
+#include <QRegularExpression>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class leeRenameTool; }
@@ -91,7 +91,7 @@ protected:
 
     QString ltestDemo();
 
-    QString GetInputName(int inIdx);
+    QString GetInputName(int inIdx,const QString inOldFilename);
 
     QStringList GetFileNames();
 

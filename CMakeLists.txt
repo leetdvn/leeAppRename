@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
 project(RenameTools VERSION 0.1 LANGUAGES CXX)
 
@@ -8,11 +8,11 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_PREFIX_PATH "C:/Qt/5.15.2/msvc2019_64/lib/cmake")
+set(CMAKE_PREFIX_PATH "C:/Qt/6.5.3/msvc2019_64/lib/cmake")
 set(ICON_DIR "${CMAKE_CURRENT_BINARY_DIR}/icon")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Core5Compat)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Gui Core Network)
 set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/RenameTools.rc")
 set(PROJECT_SOURCES
         main.cpp
@@ -52,7 +52,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(RenameTools PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(RenameTools PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt6::Core Qt6::Gui)
 
 set_target_properties(RenameTools PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
