@@ -176,7 +176,6 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
         return;
     }
 
-
     QStringList changedFiles;
 
     int count=0;
@@ -231,7 +230,18 @@ QString leeRenameTool::GetInputName(int inIdx,QString inOldFilename)
                           inOldFilename + ui->SuffixEdit->text() :
                           ui->NewnameEdit->text() + ui->SuffixEdit->text();
     NewName = ui->prefixEdit->text() + NewName ;
-    return NewName ;
+
+    NewName = NewName.isEmpty() || NewName.isNull() ? inOldFilename : NewName;
+
+    if(IsValidName(ValidNames,NewName)){
+        NewName += QString::number(inIdx);
+    }
+    else{
+        ValidNames.push_back(NewName);
+    }
+
+
+    return NewName;
 }
 
 QStringList leeRenameTool::GetFileNames()
@@ -239,6 +249,16 @@ QStringList leeRenameTool::GetFileNames()
     if(step==0) return defaultnametiles;
 
     return processNames[step];
+}
+
+bool leeRenameTool::IsValidName(const QStringList inValidNames, const QString inNewName)
+{
+    if(inValidNames.isEmpty()) return false;
+
+    for(auto n : inValidNames)
+        if(n==inNewName) return true;
+
+    return false;
 }
 
 void leeRenameTool::OnFilterBoxChanged(int state)

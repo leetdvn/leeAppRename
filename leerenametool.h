@@ -80,6 +80,8 @@ protected:
     QString lPrefix,lSuffix,lnewname,lSearch,lReplace;
     QStringList lpictures,l3DFiles,lallFiles,lPng,ljpg,ljpeg;
     QStringList defaultnametiles;
+
+    QStringList ValidNames;
     QList<QStringList> leeFilters;
     QStringList Currentnamefiles;
     QLineEdit* sline;
@@ -96,6 +98,8 @@ protected:
     QStringList GetFileNames();
 
     QUndoStack* undo_stack;
+
+    bool IsValidName(const QStringList inValidNames,const QString inNewName);
 
 private:
    void keyPressEvent(QKeyEvent *event) override;
