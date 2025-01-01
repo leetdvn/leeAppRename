@@ -176,6 +176,7 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
         return;
     }
 
+
     QStringList changedFiles;
 
     int count=0;
@@ -183,29 +184,25 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
     ui->progressBar->setRange(0,files.length());
     ui->progressBar->setValue(0);
 
-    QString LastNameChanged;
+
     for(QString &filename : files)
     {
         QFileInfo info(nDir.absolutePath() + "/" + filename);
 
         QString rawSuffix=info.suffix();
 
-        QString fName = filename.replace("." + rawSuffix,"");
         //get new input name
-        QString newName = GetInputName(count +1,fName) + "." + rawSuffix;
+        QString newName = GetInputName(count +1) + "." + rawSuffix;
 
         //create New Name
 
-        newName = nDir.absolutePath() +  "/"  +  newName;//ui->NewnameEdit->text() == "" ?
-
-        qDebug() << "Info :" << GetInputName(count +1,fName) << "File : "<< fName <<  Qt::endl;
+        newName = nDir.absolutePath() +  "/"  + newName ;
 
         //bool success ;
         //nDir.rename(info.absoluteFilePath(), newName);
 
         changedFiles.append(newName);
 
-        LastNameChanged =newName;
         if(progres > 100)
             progres=100;
 
@@ -224,24 +221,12 @@ void leeRenameTool::OnDoRenameClicked(bool isClicked)
 
 #pragma endregion //SLOTS
 
-QString leeRenameTool::GetInputName(int inIdx,QString inOldFilename)
+QString leeRenameTool::GetInputName(int inIdx)
 {
-    QString NewName= ui->NewnameEdit->text() == "" ?
-                          inOldFilename + ui->SuffixEdit->text() :
-                          ui->NewnameEdit->text() + ui->SuffixEdit->text();
+    QString NewName= ui->NewnameEdit->text();
+    NewName += ui->SuffixEdit->text();
     NewName = ui->prefixEdit->text() + NewName ;
-
-    NewName = NewName.isEmpty() || NewName.isNull() ? inOldFilename : NewName;
-
-    if(IsValidName(ValidNames,NewName)){
-        NewName += QString::number(inIdx);
-    }
-    else{
-        ValidNames.push_back(NewName);
-    }
-
-
-    return NewName;
+    return NewName.isEmpty() || NewName.isNull() ? QString::number(inIdx) : NewName + QString::number(inIdx);
 }
 
 QStringList leeRenameTool::GetFileNames()
@@ -249,16 +234,6 @@ QStringList leeRenameTool::GetFileNames()
     if(step==0) return defaultnametiles;
 
     return processNames[step];
-}
-
-bool leeRenameTool::IsValidName(const QStringList inValidNames, const QString inNewName)
-{
-    if(inValidNames.isEmpty()) return false;
-
-    for(auto n : inValidNames)
-        if(n==inNewName) return true;
-
-    return false;
 }
 
 void leeRenameTool::OnFilterBoxChanged(int state)
@@ -318,15 +293,15 @@ void leeRenameTool::OnReplaceClicked()
     {
         QFileInfo info(nDir.absolutePath() + "/" + filename);
         //----------------------------
-        QRegularExpression rx("(\\d+)");
-        QRegularExpression rNum("(\\%+$)");
-        rNum.match(sline->text(),0);
-        rx.match(filename,0);
+        QRegExp rx("(\\d+)");
+        QRegExp rNum("(\\%+$)");
+        rNum.indexIn(sline->text(),0);
+        rx.indexIn(filename,0);
 
         QString SeachCopy= sline->text();
-        rNum.match(filename).captured();
+        rNum.cap(1);
         //lSearch=="%" ? filename.remove(rx) :
-        QString num=rx.match(filename).captured(),OutNum;
+        QString num=rx.cap(1),OutNum;
 
         int nCount = sline->text().count(rNum);
         if(!filename.endsWith(num))
@@ -344,7 +319,7 @@ void leeRenameTool::OnReplaceClicked()
         //qDebug() << SeachCopy << OutNum <<  FindNumX << Qt::endl;
         QString newName =  lCurrentDirName + "/" + nSearch;
 
-        qDebug() << "Info :" << newName <<  Qt::endl;
+
         NewNames.append(newName);
         OldNames.append(info.absoluteFilePath());
 
@@ -374,10 +349,10 @@ void leeRenameTool::ReGetValue()
 
 QString& leeRenameTool::NumFilter(QString filename,QString &search)
 {
-    QRegularExpression rNum("(\\%?)");
-    QRegularExpression rx("(\\d+)");
-    rx.match(filename);// indexIn(filename,0);
-    QString num= rx.match(filename).captured();// cap(1);
+    QRegExp rNum("(\\%?)");
+    QRegExp rx("(\\d+)");
+    rx.indexIn(filename,0);
+    QString num= rx.cap(1);
     int nCount = search.count(QLatin1Char('%'));
    // qDebug() << nCount << Qt::endl;
 
@@ -463,12 +438,12 @@ void leeRenameTool::InitCommand(const QString inDir,const QStringList inOldNames
 
 QString leeRenameTool::lRemoveAllDigit(QString iStr)
 {
-    QRegularExpression rx("(\\d+)");
+    QRegExp rx("(\\d+)");
     QString outStr;
     int pos=0;
-    while(rx.match(iStr).hasMatch())  {
-        outStr += rx.match(iStr).captured();
-        pos+=rx.match(iStr).capturedLength();
+    while((pos=rx.indexIn(iStr,pos)) !=-1)  {
+        outStr += rx.cap(1);
+        pos+=rx.matchedLength();
     }
     return outStr;
 }

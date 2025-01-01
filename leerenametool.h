@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QDir>
+#include <QDirModel>
 #include <QFile>
 #include <QStandardItemModel>
 #include <QAbstractItemModel>
@@ -15,7 +15,7 @@
 #include "qlineedit.h"
 #include "QKeyEvent"
 #include <QUndoStack>
-#include <QRegularExpression>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class leeRenameTool; }
@@ -80,8 +80,6 @@ protected:
     QString lPrefix,lSuffix,lnewname,lSearch,lReplace;
     QStringList lpictures,l3DFiles,lallFiles,lPng,ljpg,ljpeg;
     QStringList defaultnametiles;
-
-    QStringList ValidNames;
     QList<QStringList> leeFilters;
     QStringList Currentnamefiles;
     QLineEdit* sline;
@@ -93,13 +91,11 @@ protected:
 
     QString ltestDemo();
 
-    QString GetInputName(int inIdx,const QString inOldFilename);
+    QString GetInputName(int inIdx);
 
     QStringList GetFileNames();
 
     QUndoStack* undo_stack;
-
-    bool IsValidName(const QStringList inValidNames,const QString inNewName);
 
 private:
    void keyPressEvent(QKeyEvent *event) override;

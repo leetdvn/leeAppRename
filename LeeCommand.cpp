@@ -51,10 +51,6 @@ void LeeTdCommand::ChangeFileName(QString inDir, QStringList inOldNames, QString
         if(!ExistsName(inOldNames[i]) ||
             ExistsName(inNewNames[i]))
             continue;
-
-        QString nName = inNewNames[i];
-        if(QFile(inNewNames[i]).exists())
-            nName += QString::number(i);
-        nDir.rename(inOldNames[i],nName);
+        nDir.rename(inOldNames[i],inNewNames[i]);
     }
 }
